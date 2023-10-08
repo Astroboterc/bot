@@ -22,28 +22,26 @@ def cmd_ping(bot, update):
 def cmd_start(bot, update, chat=None):
     bot.reply(
         update,
-        "Hello! This bot lets you subscribe to twitter accounts and receive their tweets here! "
-        "Check out /help for more info.")
+        "Welcome to Astro Bot! I'm ready to find all the latest tweets for you!"
+        "Use /help for more info.")
 
 
 @with_touched_chat
 def cmd_help(bot, update, chat=None):
         bot.reply(update, """
-Hello! This bot forwards you updates from twitter streams!
+Ruh-Roh! Astro can forward you updates from twitter!
 Here's the commands:
-- /sub - subscribes to updates from users
-- /unsub - unsubscribes from users
+- /S - subscribes to updates from users
+- /U - unsubscribes from users
 - /list  - lists current subscriptions
 - /export - sends you a /sub command that contains all current subscriptions
 - /all - shows you the latest tweets from all subscriptions
-- /wipe - remove all the data about you and your subscriptions
-- /auth - start Twitter authorization process
+- /Erase - remove all the data about you and your subscriptions
+- /Auth - start Twitter authorization process
 - /verify - send Twitter verifier code to complete authorization process
 - /export\_friends - generate /sub command to subscribe to all your Twitter friends (authorization required)
 - /set\_timezone - set your [timezone name]({}) (for example Asia/Tokyo)
-- /source - info about source code
 - /help - view help text
-This bot is free open source software, check /source if you want to host it!
 """.format(
             TIMEZONE_LIST_URL),
                   disable_web_page_preview=True,
@@ -51,9 +49,9 @@ This bot is free open source software, check /source if you want to host it!
 
 
 @with_touched_chat
-def cmd_sub(bot, update, args, chat=None):
+def cmd_S(bot, update, args, chat=None):
     if len(args) < 1:
-        bot.reply(update, "Use /sub username1 username2 username3 ...")
+        bot.reply(update, "Use /S username1 username2 username3 ...")
         return
     tw_usernames = args
     not_found = []
@@ -98,9 +96,9 @@ def cmd_sub(bot, update, args, chat=None):
 
 
 @with_touched_chat
-def cmd_unsub(bot, update, args, chat=None):
+def cmd_U(bot, update, args, chat=None):
     if len(args) < 1:
-        bot.reply(update, "Use /unsub username1 username2 username3 ...")
+        bot.reply(update, "Use /U username1 username2 username3 ...")
         return
     tw_usernames = args
     not_found = []
@@ -142,7 +140,7 @@ def cmd_list(bot, update, chat=None):
                          Subscription.tg_chat == chat))
 
     if len(subscriptions) == 0:
-        return bot.reply(update, 'You have no subscriptions yet! Add one with /sub username')
+        return bot.reply(update, 'You have no subscriptions yet! Add one with /S username')
 
     subs = ['']
     for sub in subscriptions:
@@ -153,16 +151,17 @@ def cmd_list(bot, update, chat=None):
     bot.reply(
         update,
         subject + " subscribed to the following Twitter users:\n" +
-        "\n - ".join(subs) + "\n\nYou can remove any of them using /unsub username")
+        "\n - ".join(subs) + "\n\nYou can remove any of them using /U username")
 
 
 @with_touched_chat
 def cmd_export(bot, update, chat=None):
     subscriptions = list(Subscription.select().where(
-                         Subscription.tg_chat == chat))
+                         Subscription.tg_chat == chat
+
 
     if len(subscriptions) == 0:
-        return bot.reply(update, 'You have no subscriptions yet! Add one with /sub username')
+        return bot.reply(update, 'You have no subscriptions yet! Add one with /S username')
 
     subs = ['']
     for sub in subscriptions:
@@ -172,7 +171,7 @@ def cmd_export(bot, update, chat=None):
 
     bot.reply(
         update,
-        subject + "/sub " + " ".join(subs))
+        subject + "/S " + " ".join(subs))
 
 
 @with_touched_chat
@@ -191,12 +190,6 @@ def cmd_wipe(bot, update, chat=None):
                     " Come back to me anytime you want. Goodbye!")
     chat.delete_instance(recursive=True)
 
-
-@with_touched_chat
-def cmd_source(bot, update, chat=None):
-    bot.reply(update, "This bot is Free Software under the LGPLv3. "
-                    "You can get the code from here: "
-                    "https://github.com/franciscod/telegram-twitter-forwarder-bot")
 
 
 @with_touched_chat
