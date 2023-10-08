@@ -86,7 +86,7 @@ class FetchAndSendTweetsJob(Job):
 
                 if sc == 404:
                     users_to_cleanup.append((tw_user, 'NOTFOUND'))
-                    self.logger.debug("- 404? Maybe screen name changed? Cleaning up this user")
+                    self.logger.debug("Maybe screen name changed? Cleaning up this user")
                     continue
 
                 self.logger.debug(
@@ -159,7 +159,7 @@ class FetchAndSendTweetsJob(Job):
                         .order_by(Tweet.tw_id.desc()) \
                         .first()
                     if tw is None:
-                        self.logger.warning("Something fishy is going on here...")
+                        self.logger.warning("Something is going on here...")
                     else:
                         bot.send_tweet(s.tg_chat, tw)
                         # save the latest tweet sent on this subscription
